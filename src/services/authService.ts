@@ -1,25 +1,49 @@
-import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
+
 import appleAuth from '@invertase/react-native-apple-authentication';
+
+export const getFirebaseToken = async () => {
+    const user = auth().currentUser;
+    if(user) {
+        return await user.getIdToken();
+    }
+    return null;
+};
 
 //Configuración de Google Sing-in
 GoogleSignin.configure({
     webClientId: "439763098158:web:0fc81e744f4932ec6cddbf"
 })
 
+//Registrarse
+export const register = async (email: string, password: string) => {
+    const userCredential = await auth().createUserWithEmailAndPassword(email,password);
+    return userCredential.user;
+}
 
 //Inciar Sesión con Google
 export const signInWithGoogle = async () => {
     try {
-        await GoogleSignin.hasPlayServices();
-        const { idToken } = await GoogleSignin.signIn();
-        const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-        return auth().signInWithCredential(googleCredential);
+      await GoogleSignin.hasPlayServices();
+      
+      // Primero inicia sesión
+      const userInfo = await GoogleSignin.signIn();
+  
+      // Luego obtén el token de autenticación
+      const { idToken } = await GoogleSignin.getTokens();
+  
+      // Crea credencial para Firebase
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+  
+      // Inicia sesión en Firebase
+      return auth().signInWithCredential(googleCredential);
     } catch (error) {
-        console.error("Error en Google Sign-In:", error);
-        throw error;
+      console.error("Error en Google Sign-In:", error);
+      throw error;
     }
-};
+  };
+  
 
 // Iniciar sesión con Apple
 export const signInWithApple = async () => {
