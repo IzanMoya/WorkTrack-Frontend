@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "439763098158",
+    "project_id": "worktrack-c18a2",
+    "storage_bucket": "worktrack-c18a2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:439763098158:android:c57158615708a32a6cddbf",
+        "android_client_info": {
+          "package_name": "com.izan.worktrack"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIe68ifoZvYYl_tHnZFUfyzg2XbU4CS8Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
