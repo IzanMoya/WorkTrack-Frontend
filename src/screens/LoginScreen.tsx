@@ -9,10 +9,9 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { signIn, signInWithGoogle, signInWithApple } from "../services/authService";
+import { signIn, signInWithGoogle } from "../services/authService";
 import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 // import appleAuth, { AppleButton as NativeAppleButton } from "@invertase/react-native-apple-authentication"; // Elimina esta importación directa
-import AppleSignInButton from "../components/AppleSignInButton"; // Ajusta la ruta si es necesario
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -37,14 +36,6 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
-  const handleAppleLogin = async () => {
-    try {
-      await signInWithApple();
-      navigation.navigate("HomeScreen");
-    } catch (err) {
-      setError(err.message);
-    }
-  };
 
   const navigateToForgotPassword = () => {
     navigation.navigate("RecuperarContrasena"); // Asegúrate de que "RecuperarContrasena" sea el nombre de tu ruta
@@ -91,18 +82,6 @@ const LoginScreen = ({ navigation }) => {
           onPress={handleGoogleLogin}
         />
 
-        {Platform.OS === 'ios' && (
-          <AppleSignInButton
-            style={styles.appleButton}
-            onPress={handleAppleLogin}
-          />
-        )}
-
-        {Platform.OS !== 'ios' && (
-          <Text style={styles.appleButtonPlaceholder}>
-            Iniciar sesión con Apple (solo disponible en iOS)
-          </Text>
-        )}
 
         <Text style={styles.registerText}>
           ¿No tienes cuenta?{" "}

@@ -1,8 +1,6 @@
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
 
-import appleAuth from '@invertase/react-native-apple-authentication';
-
 export const getFirebaseToken = async () => {
     const user = auth().currentUser;
     if(user) {
@@ -45,28 +43,6 @@ export const signInWithGoogle = async () => {
   };
   
 
-// Iniciar sesión con Apple
-export const signInWithApple = async () => {
-    try {
-        const appleAuthRequestResponse = await appleAuth.performRequest({
-            requestedOperation: appleAuth.Operation.LOGIN,
-            requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
-        });
-
-        if (!appleAuthRequestResponse.identityToken) {
-            throw new Error("No se obtuvo un token de identidad");
-        }
-
-        const appleCredential = auth.AppleAuthProvider.credential(
-            appleAuthRequestResponse.identityToken
-        );
-
-        return auth().signInWithCredential(appleCredential);
-    } catch (error) {
-        console.error("Error en Apple Sign-In:", error);
-        throw error;
-    }
-};
 
 
 //Registro de los usuarios

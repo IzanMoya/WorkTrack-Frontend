@@ -7,12 +7,10 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "type-check": "tsc --pretty --noEmit"
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",
-    "@invertase/react-native-apple-authentication": "^2.4.1",
     "@react-native-firebase/app": "^21.13.0",
     "@react-native-firebase/auth": "^21.13.0",
     "@react-native-google-signin/google-signin": "^13.2.0",
@@ -35,20 +33,9 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@chromatic-com/storybook": "^3.2.6",
-    "@storybook/addon-essentials": "^8.6.12",
-    "@storybook/addon-onboarding": "^8.6.12",
-    "@storybook/blocks": "^8.6.12",
-    "@storybook/experimental-addon-test": "^8.6.12",
-    "@storybook/react": "^8.6.12",
-    "@storybook/react-vite": "^8.6.12",
-    "@storybook/test": "^8.6.12",
     "@types/react": "~18.3.12",
-    "@vitest/browser": "^3.1.1",
-    "@vitest/coverage-v8": "^3.1.1",
     "playwright": "^1.51.1",
-    "storybook": "^8.6.12",
-    "typescript": "^5.3.3",
-    "vitest": "^3.1.1"
+    "typescript": "^5.3.3"
   },
   "private": true
 }
