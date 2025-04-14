@@ -1,4 +1,6 @@
 {
-  "compilerOptions": {},
+  "compilerOptions": {
+    "module": "esnext" // O también puedes usar "es2020", "es2022", "node16", "nodenext" o "preserve"
+  },
   "extends": "expo/tsconfig.base"
 }

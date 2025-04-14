@@ -1,109 +1,117 @@
-// import React, { useState, useEffect } from 'react';
-// import { StyleSheet, View, Text, Platform } from 'react-native';
-// import * as Location from 'expo-location';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Button, Platform } from 'react-native';
+import * as Location from 'expo-location';
 
-// let MapView, Marker;
-// const isWeb = Platform.OS === 'web';
+let MapViewComponent = null;
+let MarkerComponent = null;
 
-// const HomeScreen = () => {
-//   const [location, setLocation] = useState(null);
-//   const [errorMsg, setErrorMsg] = useState(null);
+const HomeScreen = () => {
+  const [location, setLocation] = useState(null);
+  const [statusFichaje, setStatusFichaje] = useState('Pendiente');
+  const [horaEntrada, setHoraEntrada] = useState(null);
+  const [isNative, setIsNative] = useState(Platform.OS !== 'web');
 
-//   useEffect(() => {
-//     (async () => {
-//       let { status } = await Location.requestForegroundPermissionsAsync();
-//       if (status !== 'granted') {
-//         setErrorMsg('Permiso de ubicación denegado');
-//         return;
-//       }
+  useEffect(() => {
+    if (isNative) {
+      import('react-native-maps')
+        .then((module) => {
+          MapViewComponent = module.default;
+          MarkerComponent = module.Marker;
+        })
+        .catch((error) => {
+          console.error('Error al cargar react-native-maps:', error);
+        });
+    }
+  }, [isNative]);
 
-//       let currentLocation = await Location.getCurrentPositionAsync({});
-//       setLocation(currentLocation);
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Permiso de ubicación denegado');
+        return;
+      }
 
-//       // Para obtener la ubicación en tiempo real (opcional)
-//       if (!isWeb) {
-//         Location.watchPositionAsync(
-//           {
-//             accuracy: Location.Accuracy.High,
-//             timeInterval: 5000,
-//             distanceInterval: 10,
-//           },
-//           (updatedLocation) => {
-//             setLocation(updatedLocation);
-//           }
-//         );
-//       }
-//     })();
-//   }, [isWeb]);
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location.coords);
+    })();
+  }, []);
 
-//   useEffect(() => {
-//     if (!isWeb) {
-//       const ReactNativeMaps = require('react-native-maps');
-//       MapView = ReactNativeMaps.default;
-//       Marker = ReactNativeMaps.Marker;
-//     }
-//   }, [isWeb]);
+  const handleFichar = () => {
+    setStatusFichaje('Hecho');
+    const now = new Date();
+    const hora = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    setHoraEntrada(hora);
+  };
 
-//   let text = 'Cargando ubicación...';
-//   if (errorMsg) {
-//     text = errorMsg;
-//   } else if (location) {
-//     text = `Lat: ${location.coords.latitude}, Lon: ${location.coords.longitude}`;
-//   }
+  return (
+    <View style={styles.container}>
+      {location && isNative && MapViewComponent && MarkerComponent ? (
+        <MapViewComponent
+          style={styles.map}
+          initialRegion={{
+            latitude: location.latitude,
+            longitude: location.longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+          }}
+        >
+          <MarkerComponent coordinate={location} title="Tu ubicación" />
+        </MapViewComponent>
+      ) : (
+        <View style={styles.mapPlaceholder}>
+          <Text>Mapa no disponible en la web</Text>
+          {/* Aquí podrías renderizar un componente de mapa web alternativo si lo deseas */}
+        </View>
+      )}
 
-//   if (isWeb) {
-//     return (
-//       <View style={styles.container}>
-//         <Text>La funcionalidad de mapa no está disponible en la web.</Text>
-//         {location && <Text>{text}</Text>}
-//         {errorMsg && <Text>{errorMsg}</Text>}
-//         {!location && !errorMsg && <Text>Cargando ubicación (solo visible en nativo)...</Text>}
-//       </View>
-//     );
-//   }
+      <View style={styles.infoContainer}>
+        <Button title="Fichar Salida" onPress={handleFichar} color="#000" />
 
-//   return (
-//     <View style={styles.container}>
-//       {location && MapView ? (
-//         <MapView
-//           style={styles.map}
-//           initialRegion={{
-//             latitude: location.coords.latitude,
-//             longitude: location.coords.longitude,
-//             latitudeDelta: 0.02,
-//             longitudeDelta: 0.02,
-//           }}
-//           showsUserLocation={true}
-//         >
-//           {/* Puedes agregar un marcador en la ubicación actual si lo deseas */}
-//           {/* <Marker
-//             coordinate={{ latitude: location.coords.latitude, longitude: location.coords.longitude }}
-//             title="Mi ubicación"
-//             description={text}
-//           /> */}
-//         </MapView>
-//       ) : (
-//         <View style={styles.loadingContainer}>
-//           <Text>{text}</Text>
-//         </View>
-//       )}
-//       {/* Puedes agregar aquí otros elementos de la interfaz de usuario */}
-//     </View>
-//   );
-// };
+        <View style={styles.statusContainer}>
+          <Text style={styles.estadoLabel}>Estado Actual Fichaje:</Text>
+          <Text style={{ color: statusFichaje === 'Pendiente' ? 'red' : 'green' }}>
+            {statusFichaje}
+          </Text>
+          {horaEntrada && (
+            <Text style={styles.hora}>Entrada registrada a las {horaEntrada}</Text>
+          )}
+        </View>
+      </View>
+    </View>
+  );
+};
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//   },
-//   map: {
-//     flex: 1,
-//   },
-//   loadingContainer: {
-//     // flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-// });
+export default HomeScreen;
 
-// export default HomeScreen;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  map: {
+    flex: 3,
+  },
+  mapPlaceholder: {
+    flex: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#eee',
+  },
+  infoContainer: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+  statusContainer: {
+    marginTop: 20,
+  },
+  estadoLabel: {
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  hora: {
+    marginTop: 5,
+    fontSize: 14,
+    color: '#555',
+  },
+});
